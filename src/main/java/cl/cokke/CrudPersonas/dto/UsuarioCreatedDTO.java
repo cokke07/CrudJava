@@ -7,6 +7,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
+
 @Builder
 @Data
 @AllArgsConstructor
@@ -16,5 +18,6 @@ public class UsuarioCreatedDTO {
     private LocalDateTime created;
     private LocalDateTime modified;
     private LocalDateTime last_login;
+    private String token;
     private boolean isActive;
 }

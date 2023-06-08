@@ -12,6 +12,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 
 @Entity
@@ -37,6 +38,7 @@ public class Usuario {
     private LocalDateTime modified;
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDateTime last_login;
+    private String token;
     private boolean isActive;
 
 }
