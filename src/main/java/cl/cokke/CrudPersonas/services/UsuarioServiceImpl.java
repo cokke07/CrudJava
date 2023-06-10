@@ -1,11 +1,14 @@
 package cl.cokke.CrudPersonas.services;
 
+import cl.cokke.CrudPersonas.dto.TelefonoDTO;
 import cl.cokke.CrudPersonas.dto.UsuarioCreatedDTO;
 import cl.cokke.CrudPersonas.dto.UsuarioEncontradoDTO;
 import cl.cokke.CrudPersonas.dto.UsuarioListDTO;
 import cl.cokke.CrudPersonas.exceptions.ApiError;
+import cl.cokke.CrudPersonas.model.Telefono;
 import cl.cokke.CrudPersonas.model.Usuario;
 import cl.cokke.CrudPersonas.repository.UsuarioRepository;
+import cl.cokke.CrudPersonas.util.Utilidades;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -45,6 +48,7 @@ public class UsuarioServiceImpl implements UsuarioService{
                 usuarioListDTO.setId(usuario.getId().toString());
                 usuarioListDTO.setNombre(usuario.getName());
                 usuarioListDTO.setEmail(usuario.getEmail());
+                usuarioListDTO.setPhones(Utilidades.concatenaTelefono(usuario.getPhones()));
                 usuariosListDTO.add(usuarioListDTO);
             }
             return usuariosListDTO;
@@ -97,10 +101,12 @@ public class UsuarioServiceImpl implements UsuarioService{
             u.setActive(true);
             //Guardamos el usuario
             usuarioRepository.save(u);
+
             //Llenamos el DTO que mostramos en la salida de este metodo
             usuarioCreatedDTO.setId(u.getId());
             usuarioCreatedDTO.setName(u.getName());
             usuarioCreatedDTO.setEmail(u.getEmail());
+            usuarioCreatedDTO.setPhones(Utilidades.concatenaTelefono(u.getPhones()));
             usuarioCreatedDTO.setCreated(u.getCreated());
             usuarioCreatedDTO.setModified(u.getModified());
             usuarioCreatedDTO.setLast_login(u.getLast_login());
@@ -140,6 +146,7 @@ public class UsuarioServiceImpl implements UsuarioService{
                 usuarioCreatedDTO.setId(id);
                 usuarioCreatedDTO.setName(usuarioEncontrado.getName());
                 usuarioCreatedDTO.setEmail(usuarioEncontrado.getEmail());
+                usuarioCreatedDTO.setPhones(Utilidades.concatenaTelefono(usuarioEncontrado.getPhones()));
                 usuarioCreatedDTO.setCreated(usuarioEncontrado.getCreated());
                 usuarioCreatedDTO.setModified(usuarioEncontrado.getModified());
                 usuarioCreatedDTO.setLast_login(usuarioEncontrado.getLast_login());
@@ -164,4 +171,5 @@ public class UsuarioServiceImpl implements UsuarioService{
             throw new ApiError("No se pudo eliminar el usuario", HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
+
 }

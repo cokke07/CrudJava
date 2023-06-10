@@ -14,5 +14,6 @@ public class UsuarioListDTO {
     private String id;
     private String nombre;
     private String email;
+    private List<TelefonoDTO> phones;
 
 }
