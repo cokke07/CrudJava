@@ -2,6 +2,7 @@ package cl.cokke.CrudPersonas.controller;
 
 import cl.cokke.CrudPersonas.dto.ApiErrorDTO;
 import cl.cokke.CrudPersonas.dto.UsuarioCreatedDTO;
+import cl.cokke.CrudPersonas.dto.UsuarioListDTO;
 import cl.cokke.CrudPersonas.exceptions.ApiError;
 import cl.cokke.CrudPersonas.exceptions.CustomRestExceptionHandler;
 import cl.cokke.CrudPersonas.model.Usuario;
@@ -22,13 +23,15 @@ public class UsuarioRestController {
     @Autowired
     private UsuarioService usuarioService;
 
-    @GetMapping("usuarios")
-    public ResponseEntity<List<Usuario>> listarusuarios(){
-        List<Usuario> listaUsuarios = new ArrayList<>();
-        listaUsuarios = usuarioService.buscarTodos();
-
-        return new ResponseEntity<>(listaUsuarios, HttpStatus.OK);
-
+    @GetMapping(value = "listar", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<UsuarioListDTO>> listarusuarios() throws ApiError {
+        List<UsuarioListDTO> listaUsuarios = new ArrayList<>();
+        try {
+            listaUsuarios = usuarioService.buscarTodos();
+            return new ResponseEntity<>(listaUsuarios, HttpStatus.OK);
+        }catch (RuntimeException ex){
+            throw new ApiError("Error interno", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping(value = "crear", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

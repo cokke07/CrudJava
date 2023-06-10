@@ -1,16 +1,17 @@
 package cl.cokke.CrudPersonas.services;
 
 import cl.cokke.CrudPersonas.dto.UsuarioCreatedDTO;
+import cl.cokke.CrudPersonas.dto.UsuarioListDTO;
 import cl.cokke.CrudPersonas.exceptions.ApiError;
 import cl.cokke.CrudPersonas.model.Usuario;
 import cl.cokke.CrudPersonas.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -28,8 +29,27 @@ public class UsuarioServiceImpl implements UsuarioService{
     private String regexPassword;
 
     @Override
-    public List<Usuario> buscarTodos() {
-        return usuarioRepository.findAll();
+    public List<UsuarioListDTO> buscarTodos() throws ApiError {
+        List<Usuario> usuarios = new ArrayList<>();
+        try {
+            if (!usuarioRepository.findAll().isEmpty()) {
+                usuarios = usuarioRepository.findAll();
+            } else {
+                throw new ApiError("La lista de usuarios esta vacia", HttpStatus.NOT_FOUND);
+            }
+
+            List<UsuarioListDTO> usuariosListDTO = new ArrayList<>();
+            for (Usuario usuario : usuarios) {
+                UsuarioListDTO usuarioListDTO = new UsuarioListDTO();
+                usuarioListDTO.setId(usuario.getId().toString());
+                usuarioListDTO.setNombre(usuario.getName());
+                usuarioListDTO.setEmail(usuario.getEmail());
+                usuariosListDTO.add(usuarioListDTO);
+            }
+            return usuariosListDTO;
+        }catch (Exception ex){
+            throw new ApiError("No se logro traer la lista de usuarios", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @Override
@@ -48,14 +68,15 @@ public class UsuarioServiceImpl implements UsuarioService{
             if (!u.getPassword().matches(regexPassword)) {
                 throw new ApiError("El password debe tener al menos 1 Mayuscula, 1 numero y 8 digitos minimo", HttpStatus.BAD_REQUEST);
             }
+            //Seteamos los parametros que se pasan en el servicio
             u.setCreated(now);
             u.setModified(now);
             u.setLast_login(now);
             u.setToken(UUID.randomUUID().toString());
             u.setActive(true);
-
+            //Guardamos el usuario
             usuarioRepository.save(u);
-
+            //Llenamos el DTO que mostramos en la salida de este metodo
             usuarioCreatedDTO.setId(u.getId());
             usuarioCreatedDTO.setName(u.getName());
             usuarioCreatedDTO.setEmail(u.getEmail());
