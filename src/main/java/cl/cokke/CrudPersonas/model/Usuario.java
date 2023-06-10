@@ -9,6 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,12 +24,16 @@ import java.util.UUID;
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_usuario")
     private Long id;
+    @Column(name = "nombre_apellido")
+    @NotNull(message = "El nombre no puede ser nulo")
     private String name;
-    @Column(nullable = false, unique = true)
-    @Email(message = "El correo ya se encuentra registrado")
+    @Column(name = "email", unique = true)
+    @NotNull(message = "El email no puede ser nulo")
     private String email;
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d).{8,}$", message = "La contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, una minúscula y un dígito.")
+    @Column(name = "password")
+    @NotNull(message = "El password no puede ser nulo")
     private String password;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Telefono> phones;

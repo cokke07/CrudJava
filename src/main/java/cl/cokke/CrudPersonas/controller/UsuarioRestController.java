@@ -1,10 +1,14 @@
 package cl.cokke.CrudPersonas.controller;
 
+import cl.cokke.CrudPersonas.dto.ApiErrorDTO;
 import cl.cokke.CrudPersonas.dto.UsuarioCreatedDTO;
+import cl.cokke.CrudPersonas.exceptions.ApiError;
+import cl.cokke.CrudPersonas.exceptions.CustomRestExceptionHandler;
 import cl.cokke.CrudPersonas.model.Usuario;
 import cl.cokke.CrudPersonas.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,10 +31,17 @@ public class UsuarioRestController {
 
     }
 
-    @PostMapping("crear")
-    public ResponseEntity<UsuarioCreatedDTO> crearUsuario(@RequestBody Usuario u){
+    @PostMapping(value = "crear", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UsuarioCreatedDTO> crearUsuario(@RequestBody Usuario u) throws ApiError{
+        UsuarioCreatedDTO nuevoUsuario = new UsuarioCreatedDTO();
+        try{
+            nuevoUsuario = usuarioService.crearUsuario(u);
+            return new ResponseEntity<>(nuevoUsuario, HttpStatus.CREATED);
+        } catch (RuntimeException ex) {
+            throw new ApiError("Error interno", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
-        UsuarioCreatedDTO nuevoUsuario = usuarioService.crearUsuario(u);
-        return new ResponseEntity<>(nuevoUsuario, HttpStatus.CREATED);
+
+
     }
 }
