@@ -2,6 +2,7 @@ package cl.cokke.CrudPersonas.controller;
 
 import cl.cokke.CrudPersonas.dto.ApiErrorDTO;
 import cl.cokke.CrudPersonas.dto.UsuarioCreatedDTO;
+import cl.cokke.CrudPersonas.dto.UsuarioEncontradoDTO;
 import cl.cokke.CrudPersonas.dto.UsuarioListDTO;
 import cl.cokke.CrudPersonas.exceptions.ApiError;
 import cl.cokke.CrudPersonas.exceptions.CustomRestExceptionHandler;
@@ -24,7 +25,7 @@ public class UsuarioRestController {
     private UsuarioService usuarioService;
 
     @GetMapping(value = "listar", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<UsuarioListDTO>> listarusuarios() throws ApiError {
+    public ResponseEntity<List<UsuarioListDTO>> listarUsuarios() throws ApiError {
         List<UsuarioListDTO> listaUsuarios = new ArrayList<>();
         try {
             listaUsuarios = usuarioService.buscarTodos();
@@ -34,6 +35,16 @@ public class UsuarioRestController {
         }
     }
 
+    @GetMapping(value = "buscar/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UsuarioEncontradoDTO> buscarUsuarioPorId(@PathVariable Long id) throws ApiError {
+        UsuarioEncontradoDTO usuarioEncontradoDTO = new UsuarioEncontradoDTO();
+        try {
+            usuarioEncontradoDTO = usuarioService.buscarPorId(id);
+            return new ResponseEntity<>(usuarioEncontradoDTO, HttpStatus.OK);
+        }catch (RuntimeException ex){
+            throw new ApiError("Error interno", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
     @PostMapping(value = "crear", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UsuarioCreatedDTO> crearUsuario(@RequestBody Usuario u) throws ApiError{
         UsuarioCreatedDTO nuevoUsuario = new UsuarioCreatedDTO();
@@ -43,8 +54,5 @@ public class UsuarioRestController {
         } catch (RuntimeException ex) {
             throw new ApiError("Error interno", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-
-
     }
 }

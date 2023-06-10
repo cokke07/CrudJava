@@ -1,6 +1,7 @@
 package cl.cokke.CrudPersonas.services;
 
 import cl.cokke.CrudPersonas.dto.UsuarioCreatedDTO;
+import cl.cokke.CrudPersonas.dto.UsuarioEncontradoDTO;
 import cl.cokke.CrudPersonas.dto.UsuarioListDTO;
 import cl.cokke.CrudPersonas.exceptions.ApiError;
 import cl.cokke.CrudPersonas.model.Usuario;
@@ -53,8 +54,27 @@ public class UsuarioServiceImpl implements UsuarioService{
     }
 
     @Override
-    public Optional<UsuarioCreatedDTO> buscarPorId(Long id) {
-        return Optional.empty();
+    public UsuarioEncontradoDTO buscarPorId(Long id) throws ApiError {
+        UsuarioEncontradoDTO usuarioEncontradoDTO = new UsuarioEncontradoDTO();
+        Usuario usuario = new Usuario();
+        try {
+            if (!usuarioRepository.findById(id).isPresent()) {
+                throw new ApiError("El usuario no fue encontrado", HttpStatus.NOT_FOUND);
+            } else {
+                usuario = usuarioRepository.findById(id).orElseThrow();
+                usuarioEncontradoDTO.setId(usuario.getId().toString());
+                usuarioEncontradoDTO.setNombre(usuario.getName());
+                usuarioEncontradoDTO.setEmail(usuario.getEmail());
+                if (usuario.isActive()) {
+                    usuarioEncontradoDTO.setEstado("activo");
+                } else {
+                    usuarioEncontradoDTO.setEstado("desactivado");
+                }
+            }
+            return usuarioEncontradoDTO;
+        }catch(Exception ex){
+            throw new ApiError("No se encontro el usuario buscado", HttpStatus.NOT_FOUND);
+        }
     }
 
     @Override
