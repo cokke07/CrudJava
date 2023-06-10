@@ -8,6 +8,7 @@ import cl.cokke.CrudPersonas.exceptions.ApiError;
 import cl.cokke.CrudPersonas.exceptions.CustomRestExceptionHandler;
 import cl.cokke.CrudPersonas.model.Usuario;
 import cl.cokke.CrudPersonas.services.UsuarioService;
+import cl.cokke.CrudPersonas.util.Constantes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -54,5 +55,28 @@ public class UsuarioRestController {
         } catch (RuntimeException ex) {
             throw new ApiError("Error interno", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PutMapping(value = "actualizar/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UsuarioCreatedDTO> actualizarUsuario(@RequestBody Usuario u, @PathVariable Long id) throws ApiError{
+        UsuarioCreatedDTO usuarioModificado = new UsuarioCreatedDTO();
+        try{
+            usuarioModificado = usuarioService.editarUsuario(u, id);
+            return new ResponseEntity<>(usuarioModificado, HttpStatus.OK);
+        } catch (RuntimeException ex) {
+            throw new ApiError("Error interno", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping(value = "eliminar/{id}")
+    public ResponseEntity<?> eliminarUsuarioPorId(@PathVariable Long id) throws ApiError {
+
+        try{
+            usuarioService.eliminarUsuario(id);
+            return new ResponseEntity<String>(Constantes.MENSAJE_ELIMINAR,HttpStatus.OK);
+        } catch (RuntimeException | ApiError ex) {
+            throw new ApiError("Error interno", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 }

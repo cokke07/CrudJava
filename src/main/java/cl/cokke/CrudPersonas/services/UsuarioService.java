@@ -13,6 +13,6 @@ public interface UsuarioService {
     public List<UsuarioListDTO> buscarTodos() throws ApiError;
     public UsuarioEncontradoDTO buscarPorId(Long id) throws ApiError;
     public UsuarioCreatedDTO crearUsuario(Usuario u) throws ApiError;
-    public UsuarioCreatedDTO editarUsuario(Usuario u);
-    public void eliminarUsuario(Long id);
+    public UsuarioCreatedDTO editarUsuario(Usuario u, Long id) throws ApiError;
+    public void eliminarUsuario(Long id) throws ApiError;
 }

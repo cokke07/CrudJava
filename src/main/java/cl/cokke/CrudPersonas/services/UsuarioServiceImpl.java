@@ -65,6 +65,7 @@ public class UsuarioServiceImpl implements UsuarioService{
                 usuarioEncontradoDTO.setId(usuario.getId().toString());
                 usuarioEncontradoDTO.setNombre(usuario.getName());
                 usuarioEncontradoDTO.setEmail(usuario.getEmail());
+                usuarioEncontradoDTO.setCreated(usuario.getCreated().toString());
                 if (usuario.isActive()) {
                     usuarioEncontradoDTO.setEstado("activo");
                 } else {
@@ -114,12 +115,53 @@ public class UsuarioServiceImpl implements UsuarioService{
     }
 
     @Override
-    public UsuarioCreatedDTO editarUsuario(Usuario u) {
-        return null;
+    public UsuarioCreatedDTO editarUsuario(Usuario u , Long id) throws ApiError {
+        UsuarioCreatedDTO usuarioCreatedDTO = new UsuarioCreatedDTO();
+        LocalDateTime now = LocalDateTime.now();
+        try {
+                Usuario usuarioEncontrado = usuarioRepository.findById(id).orElseThrow();
+                if (!u.getEmail().matches(regexEmail)) {
+                    throw new ApiError("El correo no tiene el formato correcto", HttpStatus.BAD_REQUEST);
+                }
+                if (!u.getPassword().matches(regexPassword)) {
+                    throw new ApiError("El password debe tener al menos 1 Mayuscula, 1 numero y 8 digitos minimo", HttpStatus.BAD_REQUEST);
+                }
+                //Actualizamos los parametros que se pasan en el servicio
+                usuarioEncontrado.setId(id);
+                usuarioEncontrado.setName(u.getName());
+                usuarioEncontrado.setEmail(u.getEmail());
+                usuarioEncontrado.setPassword(u.getPassword());
+                usuarioEncontrado.setPhones(u.getPhones());
+                usuarioEncontrado.setModified(now);
+                usuarioEncontrado.isActive();
+                //Guardamos el usuario
+                usuarioRepository.save(usuarioEncontrado);
+                //Llenamos el DTO que mostramos en la salida de este metodo
+                usuarioCreatedDTO.setId(id);
+                usuarioCreatedDTO.setName(usuarioEncontrado.getName());
+                usuarioCreatedDTO.setEmail(usuarioEncontrado.getEmail());
+                usuarioCreatedDTO.setCreated(usuarioEncontrado.getCreated());
+                usuarioCreatedDTO.setModified(usuarioEncontrado.getModified());
+                usuarioCreatedDTO.setLast_login(usuarioEncontrado.getLast_login());
+                usuarioCreatedDTO.setToken(usuarioEncontrado.getToken());
+                usuarioCreatedDTO.setActive(usuarioEncontrado.isActive());
+
+            return usuarioCreatedDTO;
+        }catch (Exception ex){
+            throw new ApiError("No se pudo actualizar el usuario", HttpStatus.UNPROCESSABLE_ENTITY);
+        }
     }
 
     @Override
-    public void eliminarUsuario(Long id) {
-
+    public void eliminarUsuario(Long id) throws ApiError {
+        try {
+            if (usuarioRepository.findById(id).isPresent()) {
+                usuarioRepository.deleteById(id);
+            } else {
+                throw new ApiError("No se encontro el Id para eliminar el Usuario", HttpStatus.NOT_FOUND);
+            }
+        }catch (Exception ex){
+            throw new ApiError("No se pudo eliminar el usuario", HttpStatus.UNPROCESSABLE_ENTITY);
+        }
     }
 }
