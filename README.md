@@ -53,10 +53,12 @@ como se muestra en el siguiente ejemplo:_
 
 _Ejecutando ese Endpoint de "Crear" se pueden ir probando los otros EndPoint_
 
+
 ### Analisis las pruebas 🔩
 
 _El proyecto cuenta con algunas pruebas unitarias para validar los servicios y respuestas_
 
+_La base de datos utilizada es en memoria H2 la cual al dejar de correr el proyecto, los usuarios se borran. Se recomienda un MySql o Postgres para guardar datos y persistirlos_
 
 ## Autor ✒️
 
