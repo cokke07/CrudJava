@@ -111,7 +111,7 @@ public class UsuarioRestController {
         }
     }
 
-    @DeleteMapping(value = "eliminar/{id}")
+    @DeleteMapping(value = "eliminar/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> eliminarUsuarioPorId(@PathVariable Long id) throws ApiError {
 
         try{
