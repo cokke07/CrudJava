@@ -50,12 +50,6 @@ class UsuarioServiceTest {
         List<Usuario> usuarios = new ArrayList<>();
         usuarios.add(usuario1);
 
-        //Creando un UsuarioListDto
-        /*UsuarioListDTO usuarioListDTO = new UsuarioListDTO();
-        usuarioListDTO.setId(usuario1.getId().toString());
-        usuarioListDTO.setNombre(usuario1.getName());
-        usuarioListDTO.setEmail(usuario1.getEmail());
-        usuarioListDTO.setPhones(Utilidades.concatenaTelefono(listaTelefonoDto));*/
 
         // Mock del repositorio para devolver la lista de usuarios
         Mockito.when(usuarioRepository.findAll()).thenReturn(usuarios);
